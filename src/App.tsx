@@ -10,7 +10,7 @@ export default function App() {
   
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('') // New for register
+  const [username, setUsername] = useState('') 
   
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -19,6 +19,10 @@ export default function App() {
   const [prompt, setPrompt] = useState('')
   const [licenseKey, setLicenseKey] = useState('')
   const [videoResult, setVideoResult] = useState<any>(null)
+  
+  // Hardware State
+  const [gpus, setGpus] = useState<any[]>([])
+  const [selectedGpu, setSelectedGpu] = useState<string>('')
   
   const API_URL = 'http://217.154.145.215:4000/api/v1'
 
@@ -32,6 +36,16 @@ export default function App() {
         localStorage.setItem('client_plan', newPlan);
         alert(`✨ Live-Update: Dein Account wurde erfolgreich auf ${newPlan} hochgestuft!`);
       });
+      
+      // Fetch GPUs via IPC
+      if ((window as any).require) {
+        const { ipcRenderer } = (window as any).require('electron')
+        ipcRenderer.invoke('get-gpus').then((hardware: any[]) => {
+          setGpus(hardware)
+          if (hardware.length > 0) setSelectedGpu(hardware[0].model)
+        })
+      }
+      
       return () => { socket.disconnect() };
     }
   }, [token]);
@@ -100,23 +114,40 @@ export default function App() {
     setLoading(true)
     setError('')
     setVideoResult(null)
-    try {
-      const res = await fetch(`${API_URL}/video/generate`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ prompt })
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setVideoResult(data)
-      } else {
-        setError(data.error || 'Fehler bei der Generierung')
+    
+    // Fallback: If free plan or no local IPC
+    if (plan === 'FREE' || !(window as any).require) {
+      try {
+        const res = await fetch(`${API_URL}/video/generate`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ prompt })
+        })
+        const data = await res.json()
+        if (res.ok) {
+          setVideoResult(data)
+        } else {
+          setError(data.error || 'Fehler bei der Generierung')
+        }
+      } catch (e) {
+        setError('Verbindungsfehler zur KI-Engine.')
       }
-    } catch (e) {
-      setError('Verbindungsfehler zur KI-Engine.')
+    } else {
+      // Local Hardware Rendering (PRO Plan + Electron)
+      try {
+        const { ipcRenderer } = (window as any).require('electron')
+        const data = await ipcRenderer.invoke('generate-local', prompt, selectedGpu)
+        if (data.success) {
+          setVideoResult(data)
+        } else {
+          setError(data.error || 'Fehler beim lokalen GPU Rendering')
+        }
+      } catch (e) {
+        setError('Fehler bei der Kommunikation mit der Hardware')
+      }
     }
     setLoading(false)
   }
@@ -131,7 +162,6 @@ export default function App() {
   if (!token) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#0f172a] p-4 relative overflow-hidden">
-        {/* Soft Background Glow */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
         
@@ -182,7 +212,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#0f172a] p-8 relative overflow-hidden text-slate-50">
-      {/* Soft Background Glows */}
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[150px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[150px] pointer-events-none"></div>
 
@@ -206,7 +235,7 @@ export default function App() {
           <div className="zen-card p-8 mb-10 border-yellow-500/20 bg-gradient-to-r from-yellow-500/5 to-transparent rounded-2xl flex items-center justify-between gap-6">
             <div>
               <h2 className="text-xl font-bold text-yellow-500 mb-1">MemeForge-AI Pro aktivieren</h2>
-              <p className="text-slate-400 text-sm">Schalte unlimitierte KI-Generierungen frei, indem du deinen Lizenzschlüssel eingibst.</p>
+              <p className="text-slate-400 text-sm">Schalte lokales Rendering auf deiner eigenen GPU frei.</p>
             </div>
             <div className="flex gap-4 w-full max-w-md">
               <input 
@@ -229,9 +258,27 @@ export default function App() {
 
         <main className="zen-card p-10 min-h-[500px] flex flex-col items-center justify-center rounded-3xl border border-white/5 bg-white/5 backdrop-blur-xl relative">
           <h2 className="text-3xl font-bold text-white mb-2 text-center">Studio</h2>
-          <p className="text-slate-400 mb-10 text-center">Beschreibe deine Vision und lass die KI die Magie wirken.</p>
+          <p className="text-slate-400 mb-10 text-center">Beschreibe deine Vision und lass die KI auf deiner Grafikkarte rendern.</p>
           
           <div className="w-full max-w-2xl flex flex-col gap-6">
+            {/* Hardware Selection Dropdown */}
+            {plan === 'PRO' && gpus.length > 0 && (
+              <div className="bg-black/30 p-4 rounded-2xl border border-white/10 flex items-center gap-4">
+                <label className="text-slate-400 font-semibold text-sm whitespace-nowrap">Hardware Encoder (GPU):</label>
+                <select 
+                  value={selectedGpu} 
+                  onChange={(e) => setSelectedGpu(e.target.value)}
+                  className="w-full bg-slate-900 border border-white/10 text-white p-2 rounded-lg outline-none focus:border-blue-500 transition-colors"
+                >
+                  {gpus.map((gpu, index) => (
+                    <option key={index} value={gpu.model}>
+                      {gpu.vendor} {gpu.model} ({gpu.vram ? gpu.vram + ' MB VRAM' : 'VRAM Unbekannt'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
             <textarea 
               value={prompt}
               onChange={e => setPrompt(e.target.value)}
@@ -244,7 +291,7 @@ export default function App() {
               disabled={loading || !prompt}
               className="zen-button text-white font-bold py-4 text-lg tracking-wide w-full rounded-2xl shadow-xl shadow-blue-500/20"
             >
-              {loading ? 'Generierung läuft...' : '✨ Video Generieren'}
+              {loading ? 'Generierung läuft lokal...' : '✨ Video auf GPU Generieren'}
             </button>
             
             {error && <p className="text-red-400 text-center font-bold mt-2">{error}</p>}

@@ -1,5 +1,7 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'path'
+import si from 'systeminformation'
+import { exec } from 'child_process'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -37,4 +39,36 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow()
   }
+})
+
+// IPC Handlers for Local Hardware & Generation
+ipcMain.handle('get-gpus', async () => {
+  try {
+    const graphics = await si.graphics()
+    return graphics.controllers.map(c => ({
+      vendor: c.vendor,
+      model: c.model,
+      vram: c.vram
+    }))
+  } catch (e) {
+    return []
+  }
+})
+
+ipcMain.handle('generate-local', async (event, prompt: string, gpuModel: string) => {
+  return new Promise((resolve) => {
+    // execute local python dummy generator
+    const scriptPath = path.join(__dirname, '../../local_generator.py')
+    exec(`python "${scriptPath}" "${prompt}" "${gpuModel}"`, (err, stdout, stderr) => {
+      if (err) {
+        resolve({ error: 'Fehler beim lokalen Rendern' })
+      } else {
+        try {
+          resolve(JSON.parse(stdout))
+        } catch {
+          resolve({ error: 'Ungültige Antwort von lokaler Python-Engine' })
+        }
+      }
+    })
+  })
 })
