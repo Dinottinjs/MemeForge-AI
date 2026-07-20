@@ -21,7 +21,7 @@ echo.
 echo %C5%[*] Starte Installation der MemeForge-AI App...%RESET%
 
 echo %C6%[+] Installiere Abhaengigkeiten (npm install)...%RESET%
-call npm install --no-audit --no-fund --loglevel=error
+call npm install --no-audit --no-fund --loglevel=error --prefer-offline
 
 echo.
 echo %C3%====================================================%RESET%
