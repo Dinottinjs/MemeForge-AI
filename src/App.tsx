@@ -24,11 +24,11 @@ export default function App() {
   const [gpus, setGpus] = useState<any[]>([])
   const [selectedGpu, setSelectedGpu] = useState<string>('')
   
-  const API_URL = 'http://217.154.145.215:4000/api/v1'
+  const API_URL = 'http://217.154.145.215:8080/api/v1'
 
   useEffect(() => {
     if (token) {
-      const socket = io('http://217.154.145.215:4000', {
+      const socket = io('http://217.154.145.215:8080', {
         auth: { token }
       });
       socket.on('plan_upgraded', (newPlan) => {
