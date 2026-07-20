@@ -10,8 +10,9 @@ function createWindow() {
     width: 1200,
     height: 800,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
     }
   })
 
@@ -59,7 +60,8 @@ ipcMain.handle('generate-local', async (event, prompt: string, gpuModel: string)
   return new Promise((resolve) => {
     // execute local python dummy generator
     const scriptPath = path.join(__dirname, '../../local_generator.py')
-    exec(`python "${scriptPath}" "${prompt}" "${gpuModel}"`, (err, stdout, stderr) => {
+    const { execFile } = require('child_process')
+    execFile('python', [scriptPath, prompt, gpuModel], (err: any, stdout: string, stderr: string) => {
       if (err) {
         resolve({ error: 'Fehler beim lokalen Rendern' })
       } else {

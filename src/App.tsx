@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { io } from 'socket.io-client'
+import { Toaster, toast } from 'react-hot-toast'
 
 type AuthStep = 'login' | 'register' | '2fa' | 'studio'
 
@@ -45,11 +46,10 @@ export default function App() {
       socket.on('plan_upgraded', (newPlan) => {
         setPlan(newPlan)
         localStorage.setItem('client_plan', newPlan)
-        alert(`✨ Live-Update: Dein Account wurde auf ${newPlan} hochgestuft!`)
+        toast.success(`✨ Live-Update: Dein Account wurde auf ${newPlan} hochgestuft!`)
       })
-      if ((window as any).require) {
-        const { ipcRenderer } = (window as any).require('electron')
-        ipcRenderer.invoke('get-gpus').then((hw: any[]) => {
+      if ((window as any).electron) {
+        (window as any).electron.invoke('get-gpus').then((hw: any[]) => {
           setGpus(hw)
           if (hw.length > 0) setSelectedGpu(hw[0].model)
         })
@@ -79,7 +79,9 @@ export default function App() {
         setStep('2fa')
       } else if (res.ok && data.token) {
         saveSession(data)
+        toast.success(isLogin ? 'Erfolgreich eingeloggt!' : 'Account erstellt!')
       } else {
+        toast.error(data.error || 'Fehler')
         setError(data.error || 'Fehler')
       }
     } catch { setError('Keine Verbindung.') }
@@ -114,8 +116,27 @@ export default function App() {
       body: JSON.stringify({ license_key: licenseKey })
     })
     const data = await res.json()
-    if (res.ok) { setPlan('PRO'); localStorage.setItem('client_plan', 'PRO'); alert(data.message) }
-    else setError(data.error || 'Ungültig')
+    if (res.ok) { setPlan('PRO'); localStorage.setItem('client_plan', 'PRO'); toast.success('Lizenz erfolgreich eingelöst! Du bist jetzt PRO. 🎉') }
+    else { toast.error(data.error || 'Ungültig'); setError(data.error || 'Ungültig') }
+    setLoading(false)
+  }
+
+  const buyPro = async () => {
+    setLoading(true); setError('')
+    try {
+      const res = await fetch(`${API}/payments/create-checkout`, {
+        method: 'POST', headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        if ((window as any).electron) {
+           (window as any).electron.openExternal(data.url)
+        } else {
+           window.open(data.url, '_blank')
+        }
+      }
+      else { toast.error(data.error || 'Checkout konnte nicht geladen werden.'); setError(data.error || 'Checkout konnte nicht geladen werden.') }
+    } catch { setError('Verbindungsfehler') }
     setLoading(false)
   }
 
@@ -123,18 +144,17 @@ export default function App() {
     if (!prompt) return
     setLoading(true); setError(''); setVideoResult(null)
     if (plan !== 'FREE' && (window as any).require) {
-      const { ipcRenderer } = (window as any).require('electron')
-      const data = await ipcRenderer.invoke('generate-local', prompt, selectedGpu)
-      if (data.success) setVideoResult(data)
-      else setError(data.error)
+      const data = await (window as any).electron.invoke('generate-local', prompt, selectedGpu)
+      if (data.success) { setVideoResult(data); toast.success('Video generiert!') }
+      else { toast.error(data.error); setError(data.error) }
     } else {
       const res = await fetch(`${API}/video/generate`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ prompt })
       })
       const data = await res.json()
-      if (res.ok) setVideoResult(data)
-      else setError(data.error || 'Fehler')
+      if (res.ok) { setVideoResult(data); toast.success('Video generiert!') }
+      else { toast.error(data.error || 'Fehler'); setError(data.error || 'Fehler') }
     }
     setLoading(false)
   }
@@ -154,8 +174,8 @@ export default function App() {
       body: JSON.stringify({ code: enableCode })
     })
     const data = await res.json()
-    if (res.ok) { setSuccessMsg(data.message); setTwoFaEnabled(true); setQrCode(''); setEnableCode('') }
-    else setError(data.error)
+    if (res.ok) { toast.success(data.message); setTwoFaEnabled(true); setQrCode(''); setEnableCode('') }
+    else { toast.error(data.error); setError(data.error) }
     setLoading(false)
   }
 
@@ -166,8 +186,8 @@ export default function App() {
       body: JSON.stringify({ password: disablePassword })
     })
     const data = await res.json()
-    if (res.ok) { setSuccessMsg(data.message); setTwoFaEnabled(false); setDisablePassword('') }
-    else setError(data.error)
+    if (res.ok) { toast.success(data.message); setTwoFaEnabled(false); setDisablePassword('') }
+    else { toast.error(data.error); setError(data.error) }
     setLoading(false)
   }
 
@@ -178,8 +198,8 @@ export default function App() {
       body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
     })
     const data = await res.json()
-    if (res.ok) { setSuccessMsg(data.message); setCurrentPassword(''); setNewPassword('') }
-    else setError(data.error)
+    if (res.ok) { toast.success(data.message); setCurrentPassword(''); setNewPassword('') }
+    else { toast.error(data.error); setError(data.error) }
     setLoading(false)
   }
 
@@ -198,6 +218,7 @@ export default function App() {
   if (step === 'login' || step === 'register') return (
     <div className="flex items-center justify-center min-h-screen bg-[#0f172a] p-4 relative overflow-hidden">
       {BG}
+      <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } }} />
       <div className="zen-card p-10 w-full max-w-md z-10 border border-white/5 bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tracking-tight text-center mb-2">MemeForge-AI</h1>
         <p className="text-slate-400 mt-2 font-medium text-center mb-8">{step === 'login' ? 'Willkommen zurück' : 'Neuen Account erstellen'}</p>
@@ -229,6 +250,7 @@ export default function App() {
   if (step === '2fa') return (
     <div className="flex items-center justify-center min-h-screen bg-[#0f172a] p-4 relative overflow-hidden">
       {BG}
+      <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } }} />
       <form onSubmit={handle2FA} className="zen-card p-10 w-full max-w-md z-10 text-center rounded-3xl">
         <div className="text-5xl mb-4">🔐</div>
         <h2 className="text-2xl font-bold text-white mb-2">2-Faktor-Authentifizierung</h2>
@@ -248,6 +270,7 @@ export default function App() {
     <div className="min-h-screen bg-[#0f172a] p-8 relative overflow-hidden text-slate-50">
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[150px] pointer-events-none" />
+      <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } }} />
       <div className="max-w-5xl mx-auto z-10 relative">
         <header className="flex justify-between items-center mb-12">
           <div>
@@ -310,6 +333,9 @@ export default function App() {
             <div className="flex gap-4 flex-1">
               <input type="text" placeholder="KEY-XXXXXXXX-XXXX" value={licenseKey} onChange={(e) => setLicenseKey(e.target.value)} className="flex-1 zen-input p-3 bg-black/20" />
               <button onClick={activateLicense} disabled={loading || !licenseKey} className="bg-yellow-500/90 hover:bg-yellow-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-all">Einlösen</button>
+            </div>
+            <div className="flex justify-end">
+              <button onClick={buyPro} disabled={loading} className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]">💳 Kaufen</button>
             </div>
           </div>
         )}
