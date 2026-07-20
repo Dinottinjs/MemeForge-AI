@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: memeforge-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:./data/dev.db
+    volumes:
+      - ./backend/prisma/data:/app/prisma/data
+
+  # Nginx Reverse Proxy will be added in Phase 4 for Let's Encrypt / Production Deploy
+  # nginx:
+  #   image: nginx:alpine
+  #   ...
