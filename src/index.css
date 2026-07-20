@@ -20,7 +20,7 @@ body {
 .zen-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-  border-color: #3b82f6; /* Blue glow for client */
+  border-color: #3b82f6;
 }
 
 .zen-input {
@@ -48,4 +48,30 @@ body {
   background: #3b82f6;
   box-shadow: 0 5px 20px rgba(59, 130, 246, 0.6);
   transform: scale(1.05);
+}
+
+@keyframes glowPro {
+  0% { box-shadow: 0 0 10px rgba(168, 85, 247, 0.4), 0 0 20px rgba(168, 85, 247, 0.2); transform: scale(1); }
+  50% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.8), 0 0 40px rgba(168, 85, 247, 0.5); transform: scale(1.05); }
+  100% { box-shadow: 0 0 10px rgba(168, 85, 247, 0.4), 0 0 20px rgba(168, 85, 247, 0.2); transform: scale(1); }
+}
+
+.rank-badge-pro {
+  animation: glowPro 2s infinite alternate;
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: #c084fc;
+}
+
+@keyframes glowFree {
+  0% { box-shadow: 0 0 5px rgba(100, 116, 139, 0.2); transform: scale(1); }
+  50% { box-shadow: 0 0 10px rgba(100, 116, 139, 0.4); transform: scale(1.02); }
+  100% { box-shadow: 0 0 5px rgba(100, 116, 139, 0.2); transform: scale(1); }
+}
+
+.rank-badge-free {
+  animation: glowFree 3s infinite alternate;
+  background: rgba(100, 116, 139, 0.2);
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  color: #94a3b8;
 }

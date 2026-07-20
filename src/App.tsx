@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { io } from 'socket.io-client'
 
 export default function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('client_token'))
@@ -17,6 +18,21 @@ export default function App() {
   const [videoResult, setVideoResult] = useState<any>(null)
   
   const API_URL = 'http://217.154.145.215:4000/api/v1'
+
+  useEffect(() => {
+    if (token) {
+      const socket = io('http://217.154.145.215:4000', {
+        auth: { token }
+      });
+      socket.on('plan_upgraded', (newPlan) => {
+        setPlan(newPlan);
+        localStorage.setItem('client_plan', newPlan);
+        // Play a nice sound or just alert to show the live update
+        alert(`✨ Live-Update: Dein Account wurde erfolgreich auf ${newPlan} hochgestuft!`);
+      });
+      return () => { socket.disconnect() };
+    }
+  }, [token]);
 
   const handleAuth = async (e: React.FormEvent, isLogin: boolean) => {
     e.preventDefault()
@@ -143,7 +159,7 @@ export default function App() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-extrabold text-white tracking-wide" style={{textShadow: '0 0 15px rgba(255,255,255,0.4)'}}>ZeNmOdZ AI Studio</h1>
           <div className="flex items-center gap-4">
-            <span className={`px-4 py-1 rounded-full text-sm font-bold border ${plan === 'PRO' ? 'bg-purple-500/20 border-purple-500/50 text-purple-400' : 'bg-slate-700/50 border-slate-500/30 text-slate-400'}`}>
+            <span className={`px-4 py-1 rounded-full text-sm font-bold border transition-all ${plan === 'PRO' ? 'rank-badge-pro' : 'rank-badge-free'}`}>
               {plan} PLAN
             </span>
             <button onClick={logout} className="zen-button px-6 py-2 text-white font-bold text-sm">Logout</button>
