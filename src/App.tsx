@@ -37,8 +37,8 @@ export default function App() {
   const [newPassword, setNewPassword] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
-  const API = 'http://217.154.145.215:8080/api/v1'
-  const SOCKET_URL = 'http://217.154.145.215:8080'
+  const API = 'http://217.154.145.215/api/v1'
+  const SOCKET_URL = 'http://217.154.145.215'
 
   useEffect(() => {
     if (token) {
