@@ -40,6 +40,11 @@
     "win": {
       "target": "nsis"
     },
+    "nsis": {
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "MemeForge-AI"
+    },
     "files": [
       "dist/**/*",
       "dist-electron/**/*"
