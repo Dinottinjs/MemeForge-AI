@@ -9,14 +9,12 @@
 
 ## 📥 Installation
 
-Kein Programmierwissen nötig — ein Doppelklick reicht!
+Kein Programmierwissen oder Terminal nötig — lade einfach die Software herunter und starte sie!
 
 ### Windows
-1. **Repository herunterladen** — Lade den gesamten Ordner auf deinen PC herunter.
-2. **`DEPLOY.bat` doppelklicken** — Das Skript installiert vollautomatisch alle Abhängigkeiten und startet die App. 🖱️
-3. **Fertig!** — Das Programm öffnet sich von selbst. 🎉
-
-> 💡 **Tipp:** Beim nächsten Start einfach `LAUNCH.bat` doppelklicken — das startet die App sofort ohne erneute Installation.
+1. **Setup herunterladen** — Lade die neueste `MemeForge-AI Setup X.X.X.exe` aus dem Release-Tab auf GitHub herunter.
+2. **Doppelklicken** — Die Setup-Datei installieren (wie jedes normale Programm).
+3. **Fertig!** — Das Programm startet von selbst und legt ein Icon auf deinem Desktop ab! 🎉
 
 ---
 
@@ -91,15 +89,12 @@ Du startest im **FREE**-Modus. Um die volle GPU-Power zu nutzen:
 
 ## 📁 Dateistruktur
 
-```
+```text
 MemeForge-AI/
-├── DEPLOY.bat          ← Erstinstallation & Start
-├── LAUNCH.bat          ← Schnellstart nach Installation
 ├── local_generator.py  ← Lokale KI-Engine (GPU)
-├── electron/           ← Desktop App (Electron)
-│   └── main.ts         ← Hardware-Detection & IPC
-└── src/
-    └── App.tsx         ← Haupt-UI (React)
+├── electron/           ← Desktop App (Main Process & IPC)
+├── src/                ← Haupt-UI (React Frontend)
+└── dist/               ← Fertige Setup .exe (nach Build)
 ```
 
 ---
