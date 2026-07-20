@@ -219,7 +219,7 @@ export default function App() {
     <div className="flex items-center justify-center min-h-screen bg-[#0f172a] p-4 relative overflow-hidden">
       {BG}
       <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } }} />
-      <div className="zen-card p-10 w-full max-w-md z-10 border border-white/5 bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl">
+      <div className="glass-panel hover-glow-panel p-10 w-full max-w-md z-10 rounded-3xl">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tracking-tight text-center mb-2">MemeForge-AI</h1>
         <p className="text-slate-400 mt-2 font-medium text-center mb-8">{step === 'login' ? 'Willkommen zurück' : 'Neuen Account erstellen'}</p>
         <form onSubmit={(e) => handleAuth(e, step === 'login')} className="flex flex-col gap-5">
@@ -236,7 +236,7 @@ export default function App() {
             <label className="block text-slate-400 mb-2 font-semibold text-sm">Passwort</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full zen-input p-3 bg-black/20" required />
           </div>
-          <button disabled={loading} className="w-full zen-button text-white font-bold py-3.5 rounded-xl">{loading ? 'Lade...' : step === 'login' ? 'Einloggen' : 'Registrieren'}</button>
+          <button disabled={loading} className="w-full btn-glow text-white font-bold py-3.5 rounded-xl">{loading ? 'Lade...' : step === 'login' ? 'Einloggen' : 'Registrieren'}</button>
         </form>
         <div className="text-center mt-6">
           <button onClick={() => { setStep(step === 'login' ? 'register' : 'login'); setError('') }} className="text-slate-400 hover:text-white text-sm transition-colors">
@@ -251,7 +251,7 @@ export default function App() {
     <div className="flex items-center justify-center min-h-screen bg-[#0f172a] p-4 relative overflow-hidden">
       {BG}
       <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } }} />
-      <form onSubmit={handle2FA} className="zen-card p-10 w-full max-w-md z-10 text-center rounded-3xl">
+      <form onSubmit={handle2FA} className="glass-panel hover-glow-panel p-10 w-full max-w-md z-10 text-center rounded-3xl">
         <div className="text-5xl mb-4">🔐</div>
         <h2 className="text-2xl font-bold text-white mb-2">2-Faktor-Authentifizierung</h2>
         <p className="text-slate-400 text-sm mb-6">Gib den 6-stelligen Code aus deiner Authenticator-App ein.</p>
@@ -259,7 +259,7 @@ export default function App() {
         <input value={twoFaCode} onChange={e => setTwoFaCode(e.target.value)}
           className="w-full zen-input p-4 text-center text-2xl tracking-[0.5em] font-mono mb-6"
           maxLength={6} placeholder="000000" required />
-        <button disabled={loading} className="w-full zen-button text-white font-bold py-3.5 rounded-xl">{loading ? 'Prüfe...' : 'Bestätigen'}</button>
+        <button disabled={loading} className="w-full btn-glow text-white font-bold py-3.5 rounded-xl">{loading ? 'Prüfe...' : 'Bestätigen'}</button>
         <button type="button" onClick={() => setStep('login')} className="mt-4 text-slate-500 hover:text-slate-300 text-sm transition-colors">← Zurück</button>
       </form>
     </div>
@@ -287,7 +287,7 @@ export default function App() {
         {/* Account Settings Panel */}
         {showAccount && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            <div className="zen-card p-6 rounded-2xl">
+            <div className="glass-panel hover-glow-panel p-6 rounded-2xl">
               <h3 className="text-lg font-bold text-white mb-4">🔑 Passwort ändern</h3>
               {error && <div className="bg-red-500/10 text-red-400 p-3 rounded-xl border border-red-500/20 mb-3 text-sm">{error}</div>}
               {successMsg && <div className="bg-green-500/10 text-green-400 p-3 rounded-xl border border-green-500/20 mb-3 text-sm">{successMsg}</div>}
@@ -297,7 +297,7 @@ export default function App() {
                 <button disabled={loading} className="zen-button text-white font-bold py-3 rounded-xl">Ändern</button>
               </form>
             </div>
-            <div className="zen-card p-6 rounded-2xl">
+            <div className="glass-panel hover-glow-panel p-6 rounded-2xl">
               <h3 className="text-lg font-bold text-white mb-2">🔐 2-Faktor-Authentifizierung</h3>
               <p className="text-slate-400 text-xs mb-4">Google Authenticator / Authy / Microsoft Authenticator</p>
               {error && <div className="bg-red-500/10 text-red-400 p-3 rounded-xl border border-red-500/20 mb-3 text-sm">{error}</div>}
@@ -310,7 +310,7 @@ export default function App() {
                 </form>
               ) : (
                 !qrCode ? (
-                  <button onClick={setup2FA} disabled={loading} className="zen-button text-white font-bold py-3 w-full rounded-xl">{loading ? 'Generiere...' : '🔑 2FA einrichten'}</button>
+                  <button onClick={setup2FA} disabled={loading} className="btn-glow text-white font-bold py-3 w-full rounded-xl">{loading ? 'Generiere...' : '🔑 2FA einrichten'}</button>
                 ) : (
                   <div>
                     <p className="text-slate-400 text-xs mb-2">Scanne mit deiner Authenticator-App:</p>
@@ -318,7 +318,7 @@ export default function App() {
                     <p className="text-slate-500 text-xs mb-3 break-all text-center">Schlüssel: <span className="text-blue-400 font-mono">{totpSecret}</span></p>
                     <form onSubmit={enable2FA} className="flex flex-col gap-3">
                       <input value={enableCode} onChange={e => setEnableCode(e.target.value)} className="zen-input p-3 text-center text-xl tracking-[0.4em] font-mono" maxLength={6} placeholder="000000" required />
-                      <button disabled={loading} className="zen-button text-white font-bold py-3 rounded-xl">{loading ? 'Prüfe...' : '✅ Aktivieren'}</button>
+                      <button disabled={loading} className="btn-glow text-white font-bold py-3 rounded-xl">{loading ? 'Prüfe...' : '✅ Aktivieren'}</button>
                     </form>
                   </div>
                 )
@@ -328,11 +328,11 @@ export default function App() {
         )}
 
         {plan === 'FREE' && (
-          <div className="zen-card p-8 mb-10 border-yellow-500/20 bg-gradient-to-r from-yellow-500/5 to-transparent rounded-2xl flex flex-wrap items-center gap-6">
+          <div className="glass-panel hover-glow-panel p-8 mb-10 border-yellow-500/20 bg-gradient-to-r from-yellow-500/5 to-transparent rounded-2xl flex flex-wrap items-center gap-6">
             <div><h2 className="text-xl font-bold text-yellow-500 mb-1">Pro aktivieren</h2><p className="text-slate-400 text-sm">Schalte lokales GPU-Rendering frei.</p></div>
             <div className="flex gap-4 flex-1">
               <input type="text" placeholder="KEY-XXXXXXXX-XXXX" value={licenseKey} onChange={(e) => setLicenseKey(e.target.value)} className="flex-1 zen-input p-3 bg-black/20" />
-              <button onClick={activateLicense} disabled={loading || !licenseKey} className="bg-yellow-500/90 hover:bg-yellow-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-all">Einlösen</button>
+              <button onClick={activateLicense} disabled={loading || !licenseKey} className="btn-glow text-white font-bold px-6 py-3 rounded-xl transition-all">Einlösen</button>
             </div>
             <div className="flex justify-end">
               <button onClick={buyPro} disabled={loading} className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]">💳 Kaufen</button>
@@ -340,7 +340,7 @@ export default function App() {
           </div>
         )}
 
-        <main className="zen-card p-10 flex flex-col items-center justify-center rounded-3xl border border-white/5 bg-white/5 backdrop-blur-xl">
+        <main className="glass-panel neon-box p-10 flex flex-col items-center justify-center rounded-3xl">
           <h2 className="text-3xl font-bold text-white mb-2">Studio</h2>
           <p className="text-slate-400 mb-10 text-center">Beschreibe deine Vision und lass die KI auf deiner GPU rendern.</p>
           <div className="w-full max-w-2xl flex flex-col gap-6">
@@ -353,7 +353,7 @@ export default function App() {
               </div>
             )}
             <textarea value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="z.B. Tanzende Katze im Weltall..." className="w-full zen-input p-5 min-h-[140px] resize-none text-lg bg-black/20 rounded-2xl border-white/10" />
-            <button onClick={generateMeme} disabled={loading || !prompt} className="zen-button text-white font-bold py-4 text-lg w-full rounded-2xl shadow-xl">
+            <button onClick={generateMeme} disabled={loading || !prompt} className="btn-glow text-white font-bold py-4 text-lg w-full rounded-2xl">
               {loading ? 'Generierung läuft...' : '✨ Video generieren'}
             </button>
             {error && <p className="text-red-400 text-center font-bold">{error}</p>}
