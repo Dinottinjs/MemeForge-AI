@@ -4,74 +4,99 @@
 body {
   margin: 0;
   font-family: 'Outfit', sans-serif;
-  background-color: #0f172a;
+  background-color: #0a0f1e;
   color: #f8fafc;
 }
 
 .zen-card {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.zen-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-  border-color: #3b82f6;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.3s ease;
 }
 
 .zen-input {
-  background: rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
   color: #fff;
-  transition: 0.3s;
+  transition: all 0.25s;
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
 }
 .zen-input:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
   outline: none;
 }
+.zen-input::placeholder { color: rgba(255,255,255,0.3); }
 
 .zen-button {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0.4));
-  border: 1px solid rgba(59, 130, 246, 0.5);
-  border-radius: 30px;
-  backdrop-filter: blur(10px);
-  transition: 0.4s;
-  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  font-family: 'Outfit', sans-serif;
 }
-.zen-button:hover {
-  background: #3b82f6;
-  box-shadow: 0 5px 20px rgba(59, 130, 246, 0.6);
-  transform: scale(1.05);
+.zen-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
 }
+.zen-button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 @keyframes glowPro {
-  0% { box-shadow: 0 0 10px rgba(168, 85, 247, 0.4), 0 0 20px rgba(168, 85, 247, 0.2); transform: scale(1); }
-  50% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.8), 0 0 40px rgba(168, 85, 247, 0.5); transform: scale(1.05); }
-  100% { box-shadow: 0 0 10px rgba(168, 85, 247, 0.4), 0 0 20px rgba(168, 85, 247, 0.2); transform: scale(1); }
+  0%, 100% { box-shadow: 0 0 10px rgba(168,85,247,0.4), 0 0 20px rgba(168,85,247,0.2); }
+  50% { box-shadow: 0 0 25px rgba(168,85,247,0.8), 0 0 45px rgba(168,85,247,0.4); }
 }
-
 .rank-badge-pro {
-  animation: glowPro 2s infinite alternate;
-  background: rgba(168, 85, 247, 0.2);
-  border: 1px solid rgba(168, 85, 247, 0.5);
+  animation: glowPro 2.5s ease-in-out infinite;
+  background: rgba(168,85,247,0.15);
+  border: 1px solid rgba(168,85,247,0.4);
   color: #c084fc;
 }
 
 @keyframes glowFree {
-  0% { box-shadow: 0 0 5px rgba(100, 116, 139, 0.2); transform: scale(1); }
-  50% { box-shadow: 0 0 10px rgba(100, 116, 139, 0.4); transform: scale(1.02); }
-  100% { box-shadow: 0 0 5px rgba(100, 116, 139, 0.2); transform: scale(1); }
+  0%, 100% { box-shadow: 0 0 5px rgba(100,116,139,0.2); }
+  50% { box-shadow: 0 0 12px rgba(100,116,139,0.35); }
 }
-
 .rank-badge-free {
-  animation: glowFree 3s infinite alternate;
-  background: rgba(100, 116, 139, 0.2);
-  border: 1px solid rgba(100, 116, 139, 0.3);
+  animation: glowFree 3s ease-in-out infinite;
+  background: rgba(100,116,139,0.15);
+  border: 1px solid rgba(100,116,139,0.25);
   color: #94a3b8;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fadeIn 0.35s ease forwards; }
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.4); opacity: 0.6; }
+}
+.loading-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-dot 1s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: 0.15s; }
+.loading-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* Panel slide-down */
+@keyframes slideDown {
+  from { opacity: 0; max-height: 0; }
+  to   { opacity: 1; max-height: 800px; }
+}
+.slide-down { animation: slideDown 0.3s ease forwards; overflow: hidden; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
