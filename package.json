@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "main": "electron/main.ts",
+  "main": "dist-electron/main.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "electron:dev": "concurrently \"npm run dev\" \"wait-on tcp:5173 && electron .\"",
-    "electron:build": "vite build && electron-builder"
+    "electron:build": "npx tsc -p tsconfig.electron.json && vite build && electron-builder"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -33,5 +33,22 @@
     "typescript": "~6.0.2",
     "vite": "^8.1.1",
     "wait-on": "^9.0.10"
+  },
+  "build": {
+    "appId": "com.memeforge.ai",
+    "productName": "MemeForge-AI",
+    "win": {
+      "target": "nsis"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "local_generator.py",
+        "to": "local_generator.py"
+      }
+    ]
   }
 }
