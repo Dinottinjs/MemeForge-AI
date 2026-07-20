@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "main": "dist-electron/main.js",
+  "main": "dist-electron/main.cjs",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "electron:dev": "concurrently \"npm run dev\" \"wait-on tcp:5173 && electron .\"",
-    "electron:build": "npx tsc -p tsconfig.electron.json && vite build && electron-builder"
+    "electron:build": "npx tsc -p tsconfig.electron.json && node -e \"const fs=require('fs'); fs.renameSync('dist-electron/main.js', 'dist-electron/main.cjs'); fs.renameSync('dist-electron/preload.js', 'dist-electron/preload.cjs');\" && vite build && electron-builder"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
