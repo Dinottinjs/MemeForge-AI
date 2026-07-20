@@ -4,14 +4,27 @@ import os
 import subprocess
 
 def install_dependencies():
-    required = ["torch", "diffusers", "transformers", "accelerate", "imageio", "opencv-python"]
+    required = ["torch", "diffusers", "transformers", "accelerate", "imageio", "opencv-python", "torch-directml"]
     try:
         import torch
         import diffusers
         import transformers
         import accelerate
+        import torch_directml
     except ImportError:
         subprocess.check_call([sys.executable, "-m", "pip", "install"] + required)
+
+def get_device():
+    import torch
+    if torch.cuda.is_available():
+        return "cuda"
+    try:
+        import torch_directml
+        if torch_directml.is_available():
+            return torch_directml.device()
+    except ImportError:
+        pass
+    return "cpu"
 
 def main():
     if len(sys.argv) < 3:
@@ -32,16 +45,24 @@ def main():
         # Load the model
         model_id = "damo-vilab/text-to-video-ms-1.7b"
         
-        # If the user has a CUDA-compatible GPU, use it. Otherwise fallback to CPU (extremely slow)
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        # Detect CUDA or DirectML (AMD/Intel)
+        device = get_device()
+        is_dml = str(device).startswith("privateuseone")
         
-        pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16 if device == "cuda" else torch.float32, variant="fp16" if device == "cuda" else None)
+        # Determine appropriate dtype and variant
+        dtype = torch.float16 if device == "cuda" else torch.float32
+        variant = "fp16" if device == "cuda" else None
+        
+        pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=dtype, variant=variant)
         pipe = pipe.to(device)
         
-        # Optimize memory usage
+        # Optimize memory usage for CUDA
         if device == "cuda":
             pipe.enable_model_cpu_offload()
             pipe.enable_vae_slicing()
+        elif is_dml:
+            # Basic optimization for DirectML
+            pipe.enable_attention_slicing()
             
         # Generate video
         video_frames = pipe(prompt, num_inference_steps=25).frames[0]
