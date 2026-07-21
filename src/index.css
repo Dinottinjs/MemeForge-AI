@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+@import "tailwindcss";
 
 body {
   margin: 0;
@@ -22,13 +22,15 @@ body {
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
   color: #fff;
-  transition: all 0.25s;
+  transition: all 0.25s ease-in-out;
   width: 100%;
   font-family: 'Outfit', sans-serif;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
 }
 .zen-input:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: rgba(0,0,0,0.5);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2), 0 0 0 3px rgba(59, 130, 246, 0.25);
   outline: none;
 }
 .zen-input::placeholder { color: rgba(255,255,255,0.3); }
@@ -98,10 +100,10 @@ body {
 .slide-down { animation: slideDown 0.3s ease forwards; overflow: hidden; }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
 /* ZeNmOdZ Style (Glassmorphism & Glowing) */
 .glass-panel {

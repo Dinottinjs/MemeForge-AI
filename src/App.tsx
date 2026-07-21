@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { io } from 'socket.io-client'
 import { Toaster, toast } from 'react-hot-toast'
-import { Settings, LogOut, Key, ShieldCheck, CreditCard, Sparkles, Image as ImageIcon, Loader2, CheckCircle2, Lock, Unlock, Zap, Copy, Download, History, Palette } from 'lucide-react'
+import { Settings, LogOut, Key, ShieldCheck, CreditCard, Sparkles, Image as ImageIcon, Loader2, CheckCircle2, Lock, Unlock, Copy, Download, History, Palette } from 'lucide-react'
 
 type AuthStep = 'login' | 'register' | '2fa' | 'studio'
 
@@ -283,7 +283,7 @@ export default function App() {
   if (step === 'login' || step === 'register') return (
     <div className="flex items-center justify-center min-h-screen bg-[#0f172a] p-4 relative overflow-hidden">
       {BG}
-      <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } }} />
+      <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px', zIndex: 9999 } }} />
       <div className="glass-panel hover-glow-panel p-10 w-full max-w-md z-10 rounded-3xl">
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tracking-tight text-center mb-2">MemeForge-AI</h1>
         <p className="text-slate-400 mt-2 font-medium text-center mb-8">{step === 'login' ? 'Willkommen zurück' : 'Neuen Account erstellen'}</p>
@@ -318,7 +318,7 @@ export default function App() {
   if (step === '2fa') return (
     <div className="flex items-center justify-center min-h-screen bg-[#0f172a] p-4 relative overflow-hidden">
       {BG}
-      <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } }} />
+      <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px', zIndex: 9999 } }} />
       <form onSubmit={handle2FA} className="glass-panel hover-glow-panel p-10 w-full max-w-md z-10 text-center rounded-3xl">
         <div className="flex justify-center mb-4"><ShieldCheck size={48} className="text-blue-400" /></div>
         <h2 className="text-2xl font-bold text-white mb-2">2-Faktor-Authentifizierung</h2>
@@ -341,9 +341,9 @@ export default function App() {
     <div className="min-h-screen bg-[#0f172a] p-8 relative overflow-hidden text-slate-50">
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[150px] pointer-events-none" />
-      <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } }} />
+      <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px', zIndex: 9999 } }} />
       <div className="max-w-5xl mx-auto z-10 relative">
-        <header className="flex justify-between items-center mb-12">
+        <header className="flex flex-wrap justify-between items-center gap-y-4 mb-12">
           <div>
             <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 tracking-tight">MemeForge-AI</h1>
             {storedUsername && <p className="text-slate-400 font-medium mt-1">Hey, {storedUsername} 👋</p>}
@@ -425,7 +425,7 @@ export default function App() {
           </div>
         )}
 
-        <main className="glass-panel neon-box p-10 flex flex-col items-center justify-center rounded-3xl min-h-[700px]">
+        <main className="glass-panel neon-box p-10 flex flex-col items-center justify-center rounded-3xl min-h-[500px]">
           <div className="flex bg-black/40 p-1 rounded-2xl mb-8 w-full max-w-sm">
             <button onClick={() => setActiveTab('studio')} className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${activeTab === 'studio' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>
               <Palette size={18} /> Studio
@@ -496,7 +496,7 @@ export default function App() {
                   {memeHistory.map((meme, idx) => (
                     <div key={idx} className="bg-black/40 rounded-2xl p-4 border border-white/10 hover:border-purple-500/50 transition-colors">
                       <img src={meme.image_url} alt="Meme" className="w-full h-64 object-cover rounded-xl mb-4" />
-                      <p className="text-sm text-slate-400 mb-4 line-clamp-2" title={meme.prompt}>"{meme.prompt}"</p>
+                      <p className="text-sm text-slate-400 mb-4 line-clamp-2 min-h-[40px]" title={meme.prompt}>"{meme.prompt}"</p>
                       <div className="flex gap-2">
                         <button onClick={() => downloadImage(meme.image_url, `meme_${meme.id}.png`)} className="flex-1 flex items-center justify-center gap-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold py-2 rounded-lg transition-all">
                           <Download size={16} /> Save
