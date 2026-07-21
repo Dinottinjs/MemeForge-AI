@@ -4,7 +4,7 @@ import os
 import subprocess
 
 def install_dependencies():
-    required = ["torch", "diffusers", "transformers", "accelerate", "torch-directml"]
+    required = ["torch", "diffusers==0.29.2", "transformers==4.41.2", "accelerate", "torch-directml"]
     try:
         import torch
         import diffusers
