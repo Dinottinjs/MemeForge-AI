@@ -1,33 +1,33 @@
 # MemeForge-AI
-> The Ultimate Viral AI Meme Generator
+> Der ultimative, virale AI Meme-Generator
 
-![MemeForge-AI Banner](https://via.placeholder.com/1200x400.png?text=MemeForge-AI+Studio)
+![MemeForge-AI Banner](src/assets/hero.png)
 
-**MemeForge-AI** is a premium, high-performance desktop application that empowers creators to forge viral, internet-breaking memes using state-of-the-art Stable Diffusion models.
+**MemeForge-AI** ist eine leistungsstarke Premium-Desktop-Anwendung, mit der Creator virale, das Internet erobernde Memes mithilfe modernster Stable-Diffusion-Modelle schmieden können.
 
 ## 🚀 Features
 
-- **Local GPU Rendering (PRO):** Leverage your own hardware (RTX/DirectML) for unlimited, lightning-fast generation without server wait times.
-- **Cloud Generation (FREE):** Instantly create up to 3 memes per 3-hour window using our dedicated cloud infrastructure.
-- **Meme Gallery:** Automatically save and review your generated memes.
-- **Instant Export:** Native 1-click downloads and clipboard copying for seamless social media sharing.
-- **Premium Interface:** A dark-mode, glassmorphism UI designed for a "WOW" user experience.
-- **Enterprise-Grade Security:** 2FA authentication, secure Stripe integration, and encrypted communication.
+- **Lokales GPU-Rendering (PRO):** Nutze deine eigene Hardware (RTX/DirectML) für unbegrenzte, blitzschnelle Generierungen ohne Server-Wartezeiten.
+- **Cloud-Generierung (FREE):** Erstelle sofort bis zu 3 Memes pro 3-Stunden-Fenster über unsere dedizierte Cloud-Infrastruktur.
+- **Meme-Galerie:** Speichere und überprüfe automatisch deine generierten Memes.
+- **Sofortiger Export:** Native 1-Klick-Downloads und Kopieren in die Zwischenablage für nahtloses Teilen auf Social Media.
+- **Premium-Benutzeroberfläche:** Ein Dark-Mode-UI im Glassmorphism-Design für ein echtes "WOW"-Erlebnis.
+- **Sicherheit auf Enterprise-Niveau:** 2FA-Authentifizierung, sichere Stripe-Integration und verschlüsselte Kommunikation.
 
 ## 🛠️ Tech Stack
 
 - **Frontend:** React, TypeScript, Tailwind CSS, Lucide Icons
-- **Desktop Environment:** Electron, Vite
+- **Desktop-Umgebung:** Electron, Vite
 - **AI Core:** Python, PyTorch, Diffusers
 - **Backend:** Node.js, Express, Prisma (SQLite/PostgreSQL)
 
 ## 📦 Installation (Desktop App)
 
-1. Download the latest installer from the Releases tab.
-2. Run `MemeForge-AI Setup 0.0.0.exe`.
-3. Create an account and start forging!
+1. Lade das neueste Installationsprogramm (`.exe`) herunter.
+2. Führe `MemeForge-AI Setup 0.0.0.exe` aus.
+3. Erstelle einen Account und fang an zu schmieden!
 
-## 📄 License
+## 📄 Lizenz
 
-© 2026 MemeForge-AI. All rights reserved.
-This software is proprietary. Unauthorized copying, modification, or distribution is strictly prohibited.
+© 2026 MemeForge-AI. Alle Rechte vorbehalten.
+Diese Software ist proprietär. Unerlaubtes Kopieren, Verändern oder Verbreiten ist strengstens untersagt.
