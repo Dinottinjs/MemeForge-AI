@@ -20,7 +20,7 @@ export default function App() {
   // Studio state
   const [prompt, setPrompt] = useState('')
   const [licenseKey, setLicenseKey] = useState('')
-  const [videoResult, setVideoResult] = useState<any>(null)
+  const [mediaResult, setMediaResult] = useState<any>(null)
   const [gpus, setGpus] = useState<any[]>([])
   const [selectedGpu, setSelectedGpu] = useState('')
   const [loading, setLoading] = useState(false)
@@ -142,18 +142,18 @@ export default function App() {
 
   const generateMeme = async () => {
     if (!prompt) return
-    setLoading(true); setError(''); setVideoResult(null)
+    setLoading(true); setError(''); setMediaResult(null)
     if (plan !== 'FREE' && (window as any).electron) {
       const data = await (window as any).electron.invoke('generate-local', prompt, selectedGpu)
-      if (data.success) { setVideoResult(data); toast.success('Video generiert!') }
+      if (data.success) { setMediaResult(data); toast.success('Meme generiert!') }
       else { toast.error(data.error); setError(data.error) }
     } else {
-      const res = await fetch(`${API}/video/generate`, {
+      const res = await fetch(`${API}/meme/generate`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ prompt })
       })
       const data = await res.json()
-      if (res.ok) { setVideoResult(data); toast.success('Video generiert!') }
+      if (res.ok) { setMediaResult(data); toast.success('Meme generiert!') }
       else { toast.error(data.error || 'Fehler'); setError(data.error || 'Fehler') }
     }
     setLoading(false)
@@ -341,8 +341,8 @@ export default function App() {
         )}
 
         <main className="glass-panel neon-box p-10 flex flex-col items-center justify-center rounded-3xl">
-          <h2 className="text-3xl font-bold text-white mb-2">Studio</h2>
-          <p className="text-slate-400 mb-10 text-center">Beschreibe deine Vision und lass die KI auf deiner GPU rendern.</p>
+          <h2 className="text-3xl font-bold text-white mb-2">AI Viral Meme Generator</h2>
+          <p className="text-slate-400 mb-10 text-center">Beschreibe deine Vision und lass die KI ein virales Meme-Bild generieren.</p>
           <div className="w-full max-w-2xl flex flex-col gap-6">
             {plan !== 'FREE' && gpus.length > 0 && (
               <div className="bg-black/30 p-4 rounded-2xl border border-white/10 flex items-center gap-4">
@@ -354,14 +354,14 @@ export default function App() {
             )}
             <textarea value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="z.B. Tanzende Katze im Weltall..." className="w-full zen-input p-5 min-h-[140px] resize-none text-lg bg-black/20 rounded-2xl border-white/10" />
             <button onClick={generateMeme} disabled={loading || !prompt} className="btn-glow text-white font-bold py-4 text-lg w-full rounded-2xl">
-              {loading ? 'Generierung läuft...' : '✨ Video generieren'}
+              {loading ? 'Generierung läuft...' : '✨ Meme generieren'}
             </button>
             {error && <p className="text-red-400 text-center font-bold">{error}</p>}
           </div>
-          {videoResult && (
+          {mediaResult && (
             <div className="mt-12 w-full max-w-2xl bg-black/40 p-6 rounded-2xl border border-white/10">
-              <p className="text-green-400 font-bold mb-4">✅ {videoResult.message}</p>
-              <video src={videoResult.video_url} controls autoPlay className="w-full rounded-xl shadow-2xl border border-white/5" />
+              <p className="text-green-400 font-bold mb-4">✅ {mediaResult.message}</p>
+              <img src={mediaResult.image_url} alt="Generated Meme" className="w-full rounded-xl shadow-2xl border border-white/5" />
             </div>
           )}
         </main>

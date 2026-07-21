@@ -60,8 +60,8 @@ ipcMain.handle('generate-local', async (event, prompt: string, gpuModel: string)
   return new Promise((resolve) => {
     // execute local python dummy generator
     const scriptPath = app.isPackaged 
-      ? path.join(process.resourcesPath, 'local_generator.py')
-      : path.join(__dirname, '../local_generator.py')
+      ? path.join(process.resourcesPath, 'local_image_generator.py')
+      : path.join(__dirname, '../local_image_generator.py')
     const { execFile } = require('child_process')
     execFile('python', [scriptPath, prompt, gpuModel], (err: any, stdout: string, stderr: string) => {
       if (err) {

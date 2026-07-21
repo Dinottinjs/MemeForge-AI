@@ -51,8 +51,8 @@
     ],
     "extraResources": [
       {
-        "from": "local_generator.py",
-        "to": "local_generator.py"
+        "from": "local_image_generator.py",
+        "to": "local_image_generator.py"
       }
     ]
   }

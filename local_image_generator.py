@@ -4,7 +4,7 @@ import os
 import subprocess
 
 def install_dependencies():
-    required = ["torch", "diffusers", "transformers", "accelerate", "imageio", "opencv-python", "torch-directml"]
+    required = ["torch", "diffusers", "transformers", "accelerate", "torch-directml"]
     try:
         import torch
         import diffusers
@@ -39,48 +39,46 @@ def main():
         install_dependencies()
         
         import torch
-        from diffusers import DiffusionPipeline
-        from diffusers.utils import export_to_video
+        from diffusers import StableDiffusionPipeline
         
-        # Load the model
-        model_id = "damo-vilab/text-to-video-ms-1.7b"
+        # Load the model for image generation
+        model_id = "runwayml/stable-diffusion-v1-5"
         
-        # Detect CUDA or DirectML (AMD/Intel)
         device = get_device()
         is_dml = str(device).startswith("privateuseone")
         
-        # Determine appropriate dtype and variant
         dtype = torch.float16 if device == "cuda" else torch.float32
         variant = "fp16" if device == "cuda" else None
         
-        pipe = DiffusionPipeline.from_pretrained(model_id, torch_dtype=dtype, variant=variant)
+        pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=dtype, variant=variant)
         pipe = pipe.to(device)
         
-        # Optimize memory usage for CUDA
         if device == "cuda":
             pipe.enable_model_cpu_offload()
-            pipe.enable_vae_slicing()
+            pipe.enable_attention_slicing()
         elif is_dml:
-            # Basic optimization for DirectML
             pipe.enable_attention_slicing()
             
-        # Generate video
-        video_frames = pipe(prompt, num_inference_steps=25).frames[0]
+        # Meme style prompt suffix
+        meme_prompt = f"{prompt}, high quality, meme style, funny, clear subject"
         
-        # Save video
-        output_dir = os.path.join(os.path.dirname(__file__), "dist", "videos")
+        # Generate image
+        image = pipe(meme_prompt, num_inference_steps=20).images[0]
+        
+        # Save image
+        output_dir = os.path.join(os.path.dirname(__file__), "dist", "images")
         os.makedirs(output_dir, exist_ok=True)
         
         import time
-        filename = f"gen_{int(time.time())}_{abs(hash(prompt))}.mp4"
+        filename = f"meme_{int(time.time())}_{abs(hash(prompt))}.png"
         output_path = os.path.join(output_dir, filename)
         
-        export_to_video(video_frames, output_path, fps=10)
+        image.save(output_path)
         
         print(json.dumps({
             "success": True,
-            "message": f"WOW! Video gerendert mit lokaler GPU ({gpu_name})!",
-            "video_url": f"file:///{output_path.replace(os.sep, '/')}"
+            "message": f"WOW! Viral Meme gerendert mit lokaler GPU ({gpu_name})!",
+            "image_url": f"file:///{output_path.replace(os.sep, '/')}"
         }))
     except Exception as e:
         print(json.dumps({"error": f"Fehler bei lokaler Generierung: {str(e)}"}))

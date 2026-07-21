@@ -31,11 +31,11 @@ Du startest im **FREE**-Modus. Um die volle GPU-Power zu nutzen:
 - Gib deinen `PRO`-Lizenzschlüssel im gelben Banner ein
 - Dein Rang aktualisiert sich **live per WebSocket** — kein Neustart nötig!
 
-### 4. 🎬 Video generieren
+### 4. 🎨 AI Viral Meme generieren
 1. Wähle deine Grafikkarte aus dem **GPU-Dropdown** (nur PRO)
 2. Gib deinen Prompt ein (z.B. *"Tanzende Katze im Weltraum"*)
-3. Klicke auf **✨ Video generieren**
-4. Die KI-Engine rendert das Video lokal auf deiner GPU!
+3. Klicke auf **✨ Meme generieren**
+4. Die KI-Engine rendert das Meme blitzschnell auf deiner GPU!
 
 ---
 
@@ -46,7 +46,7 @@ Du startest im **FREE**-Modus. Um die volle GPU-Power zu nutzen:
 | Account & Login | ✅ | ✅ |
 | 2FA Authentifizierung | ✅ | ✅ |
 | Account-Einstellungen | ✅ | ✅ |
-| Video generieren (Server) | ✅ | ✅ |
+| Viral Meme generieren (Server) | ✅ | ✅ |
 | Lokales GPU-Rendering | ❌ | ✅ |
 | GPU-Auswahl (eigene Hardware) | ❌ | ✅ |
 | Live-Plan Upgrade (WebSocket) | ✅ | ✅ |
@@ -91,7 +91,7 @@ Du startest im **FREE**-Modus. Um die volle GPU-Power zu nutzen:
 
 ```text
 MemeForge-AI/
-├── local_generator.py  ← Lokale KI-Engine (GPU)
+├── local_image_generator.py  ← Lokale KI-Engine (GPU)
 ├── electron/           ← Desktop App (Main Process & IPC)
 ├── src/                ← Haupt-UI (React Frontend)
 └── dist/               ← Fertige Setup .exe (nach Build)
