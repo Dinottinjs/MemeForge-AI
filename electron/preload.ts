@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer, shell } from 'electron'
 
 contextBridge.exposeInMainWorld('electron', {
   invoke: (channel: string, ...args: any[]) => {
-    const validChannels = ['get-gpus', 'generate-local']
+    const validChannels = ['get-gpus', 'generate-local', 'download-file', 'copy-image']
     if (validChannels.includes(channel)) {
       return ipcRenderer.invoke(channel, ...args)
     }

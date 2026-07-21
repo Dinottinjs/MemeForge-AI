@@ -76,3 +76,38 @@ ipcMain.handle('generate-local', async (event, prompt: string, gpuModel: string)
     })
   })
 })
+
+ipcMain.handle('download-file', async (event, url: string, defaultFilename: string) => {
+  const { dialog } = require('electron')
+  const fs = require('fs')
+  
+  const { canceled, filePath } = await dialog.showSaveDialog({
+    title: 'Bild speichern',
+    defaultPath: defaultFilename || 'meme.png',
+    filters: [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg'] }]
+  })
+  
+  if (canceled || !filePath) return false
+
+  try {
+    const response = await fetch(url)
+    const buffer = await response.arrayBuffer()
+    fs.writeFileSync(filePath, Buffer.from(buffer))
+    return true
+  } catch (e) {
+    return false
+  }
+})
+
+ipcMain.handle('copy-image', async (event, url: string) => {
+  const { clipboard, nativeImage } = require('electron')
+  try {
+    const response = await fetch(url)
+    const buffer = await response.arrayBuffer()
+    const image = nativeImage.createFromBuffer(Buffer.from(buffer))
+    clipboard.writeImage(image)
+    return true
+  } catch (e) {
+    return false
+  }
+})

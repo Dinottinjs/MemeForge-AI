@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { io } from 'socket.io-client'
 import { Toaster, toast } from 'react-hot-toast'
-import { Settings, LogOut, Key, ShieldCheck, CreditCard, Sparkles, Image as ImageIcon, Loader2, CheckCircle2, Lock, Unlock, Zap } from 'lucide-react'
+import { Settings, LogOut, Key, ShieldCheck, CreditCard, Sparkles, Image as ImageIcon, Loader2, CheckCircle2, Lock, Unlock, Zap, Copy, Download, History, Palette } from 'lucide-react'
 
 type AuthStep = 'login' | 'register' | '2fa' | 'studio'
 
@@ -26,6 +26,8 @@ export default function App() {
   const [selectedGpu, setSelectedGpu] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [activeTab, setActiveTab] = useState<'studio' | 'gallery'>('studio')
+  const [memeHistory, setMemeHistory] = useState<any[]>([])
 
   // Account / 2FA state
   const [showAccount, setShowAccount] = useState(false)
@@ -158,6 +160,57 @@ export default function App() {
       else { toast.error(data.error || 'Fehler'); setError(data.error || 'Fehler') }
     }
     setLoading(false)
+  }
+
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch(`${API}/memes/history`, { headers: { Authorization: `Bearer ${token}` } })
+      const data = await res.json()
+      if (res.ok) setMemeHistory(data.memes || [])
+    } catch (err) { console.error('Failed to load history', err) }
+  }
+
+  useEffect(() => {
+    if (activeTab === 'gallery' && token) {
+      fetchHistory()
+    }
+  }, [activeTab, token])
+
+  const downloadImage = async (url: string, filename: string) => {
+    try {
+      if ((window as any).electron) {
+        await (window as any).electron.invoke('download-file', url, filename)
+        toast.success('Bild gespeichert!')
+      } else {
+        const response = await fetch(url)
+        const blob = await response.blob()
+        const objectUrl = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = objectUrl
+        a.download = filename || 'meme.png'
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(objectUrl)
+        document.body.removeChild(a)
+        toast.success('Bild heruntergeladen!')
+      }
+    } catch (e) { toast.error('Fehler beim Download') }
+  }
+
+  const copyToClipboard = async (url: string) => {
+    try {
+      if ((window as any).electron) {
+        await (window as any).electron.invoke('copy-image', url)
+        toast.success('In Zwischenablage kopiert!')
+      } else {
+        const response = await fetch(url)
+        const blob = await response.blob()
+        await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
+        toast.success('In Zwischenablage kopiert!')
+      }
+    } catch (e) {
+      toast.error('Kopieren fehlgeschlagen.')
+    }
   }
 
   const setup2FA = async () => {
@@ -361,44 +414,92 @@ export default function App() {
           </div>
         )}
 
-        <main className="glass-panel neon-box p-10 flex flex-col items-center justify-center rounded-3xl">
-          <h2 className="text-3xl font-bold text-white mb-2">AI Viral Meme Generator</h2>
-          <p className="text-slate-400 mb-10 text-center">Beschreibe deine Vision und lass die KI ein virales Meme-Bild generieren.</p>
-          <div className="w-full max-w-2xl flex flex-col gap-6">
-            {plan !== 'FREE' && gpus.length > 0 && (
-              <div className="bg-black/30 p-4 rounded-2xl border border-white/10 flex items-center gap-4">
-                <label className="text-slate-400 font-semibold text-sm whitespace-nowrap">GPU:</label>
-                <select value={selectedGpu} onChange={e => setSelectedGpu(e.target.value)} className="w-full bg-slate-900 border border-white/10 text-white p-2 rounded-lg outline-none focus:border-blue-500">
-                  {gpus.map((g, i) => <option key={i} value={g.model}>{g.vendor} {g.model} ({g.vram}MB)</option>)}
-                </select>
-              </div>
-            )}
-            <textarea value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="z.B. Tanzende Katze im Weltall..." className="w-full zen-input p-5 min-h-[140px] resize-none text-lg bg-black/20 rounded-2xl border-white/10" />
-            <button onClick={generateMeme} disabled={loading || !prompt} className="btn-glow flex items-center justify-center gap-2 text-white font-bold py-4 text-lg w-full rounded-2xl">
-              {loading ? <Loader2 className="animate-spin" size={24} /> : <Sparkles size={24} />}
-              {loading ? 'Generierung läuft...' : 'Meme generieren'}
+        <main className="glass-panel neon-box p-10 flex flex-col items-center justify-center rounded-3xl min-h-[700px]">
+          <div className="flex bg-black/40 p-1 rounded-2xl mb-8 w-full max-w-sm">
+            <button onClick={() => setActiveTab('studio')} className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${activeTab === 'studio' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>
+              <Palette size={18} /> Studio
             </button>
-            {error && <p className="text-red-400 text-center font-bold">{error}</p>}
+            <button onClick={() => setActiveTab('gallery')} className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${activeTab === 'gallery' ? 'bg-purple-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}>
+              <History size={18} /> Meine Memes
+            </button>
           </div>
 
-          <div className="mt-12 w-full max-w-2xl bg-black/40 p-6 rounded-2xl border border-white/10 min-h-[400px] flex items-center justify-center relative overflow-hidden">
-            {mediaResult ? (
-              <div className="w-full flex flex-col items-center">
-                <p className="text-green-400 font-bold mb-4 flex items-center gap-2"><CheckCircle2 size={20} /> {mediaResult.message}</p>
-                <img src={mediaResult.image_url} alt="Generated Meme" className="w-full h-auto object-contain rounded-xl shadow-2xl border border-white/5" />
+          {activeTab === 'studio' ? (
+            <>
+              <h2 className="text-3xl font-bold text-white mb-2">AI Viral Meme Generator</h2>
+              <p className="text-slate-400 mb-10 text-center">Beschreibe deine Vision und lass die KI ein virales Meme-Bild generieren.</p>
+              <div className="w-full max-w-2xl flex flex-col gap-6">
+                {plan !== 'FREE' && gpus.length > 0 && (
+                  <div className="bg-black/30 p-4 rounded-2xl border border-white/10 flex items-center gap-4">
+                    <label className="text-slate-400 font-semibold text-sm whitespace-nowrap">GPU:</label>
+                    <select value={selectedGpu} onChange={e => setSelectedGpu(e.target.value)} className="w-full bg-slate-900 border border-white/10 text-white p-2 rounded-lg outline-none focus:border-blue-500">
+                      {gpus.map((g, i) => <option key={i} value={g.model}>{g.vendor} {g.model} ({g.vram}MB)</option>)}
+                    </select>
+                  </div>
+                )}
+                <textarea value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="z.B. Tanzende Katze im Weltall..." className="w-full zen-input p-5 min-h-[140px] resize-none text-lg bg-black/20 rounded-2xl border-white/10" />
+                <button onClick={generateMeme} disabled={loading || !prompt} className="btn-glow flex items-center justify-center gap-2 text-white font-bold py-4 text-lg w-full rounded-2xl">
+                  {loading ? <Loader2 className="animate-spin" size={24} /> : <Sparkles size={24} />}
+                  {loading ? 'Generierung läuft...' : 'Meme generieren'}
+                </button>
+                {error && <p className="text-red-400 text-center font-bold">{error}</p>}
               </div>
-            ) : loading ? (
-              <div className="flex flex-col items-center text-blue-400">
-                <Loader2 className="animate-spin mb-4" size={48} />
-                <p className="font-semibold animate-pulse">KI schmiedet dein Meme...</p>
+
+              <div className="mt-12 w-full max-w-2xl bg-black/40 p-6 rounded-2xl border border-white/10 min-h-[400px] flex items-center justify-center relative overflow-hidden">
+                {mediaResult ? (
+                  <div className="w-full flex flex-col items-center">
+                    <p className="text-green-400 font-bold mb-4 flex items-center gap-2"><CheckCircle2 size={20} /> {mediaResult.message}</p>
+                    <img src={mediaResult.image_url} alt="Generated Meme" className="w-full h-auto object-contain rounded-xl shadow-2xl border border-white/5 mb-4" />
+                    <div className="flex gap-4 w-full">
+                      <button onClick={() => downloadImage(mediaResult.image_url, `meme_${Date.now()}.png`)} className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all">
+                        <Download size={18} /> Speichern
+                      </button>
+                      <button onClick={() => copyToClipboard(mediaResult.image_url)} className="flex-1 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition-all">
+                        <Copy size={18} /> Kopieren
+                      </button>
+                    </div>
+                  </div>
+                ) : loading ? (
+                  <div className="flex flex-col items-center text-blue-400">
+                    <Loader2 className="animate-spin mb-4" size={48} />
+                    <p className="font-semibold animate-pulse">KI schmiedet dein Meme...</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center text-slate-500/50">
+                    <ImageIcon size={64} className="mb-4" />
+                    <p className="font-semibold text-lg">Bild-Vorschau</p>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="flex flex-col items-center text-slate-500/50">
-                <ImageIcon size={64} className="mb-4" />
-                <p className="font-semibold text-lg">Bild-Vorschau</p>
-              </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <div className="w-full max-w-4xl">
+              <h2 className="text-2xl font-bold text-white mb-6">Deine generierten Memes</h2>
+              {memeHistory.length === 0 ? (
+                <div className="text-center py-20 bg-black/20 rounded-3xl border border-white/5">
+                  <ImageIcon size={48} className="mx-auto text-slate-600 mb-4" />
+                  <p className="text-slate-400">Noch keine Memes generiert.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {memeHistory.map((meme, idx) => (
+                    <div key={idx} className="bg-black/40 rounded-2xl p-4 border border-white/10 hover:border-purple-500/50 transition-colors">
+                      <img src={meme.image_url} alt="Meme" className="w-full h-64 object-cover rounded-xl mb-4" />
+                      <p className="text-sm text-slate-400 mb-4 line-clamp-2" title={meme.prompt}>"{meme.prompt}"</p>
+                      <div className="flex gap-2">
+                        <button onClick={() => downloadImage(meme.image_url, `meme_${meme.id}.png`)} className="flex-1 flex items-center justify-center gap-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold py-2 rounded-lg transition-all">
+                          <Download size={16} /> Save
+                        </button>
+                        <button onClick={() => copyToClipboard(meme.image_url)} className="flex-1 flex items-center justify-center gap-1 bg-white/10 hover:bg-white/20 text-white text-sm font-bold py-2 rounded-lg transition-all">
+                          <Copy size={16} /> Copy
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </main>
       </div>
     </div>
