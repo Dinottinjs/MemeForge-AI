@@ -1,7 +1,8 @@
 # MemeForge-AI
 > Der ultimative, virale AI Meme-Generator
 
-![MemeForge-AI Banner](src/assets/hero.png)
+[![GitHub](https://img.shields.io/badge/Platform-Windows-blue?logo=windows)](https://github.com/Dinottinjs/MemeForge-AI)
+[![License](https://img.shields.io/badge/Plan-Freemium-purple)](https://github.com/Dinottinjs/MemeForge-AI)
 
 **MemeForge-AI** ist eine leistungsstarke Premium-Desktop-Anwendung, mit der Creator virale, das Internet erobernde Memes mithilfe modernster Stable-Diffusion-Modelle schmieden können.
 
