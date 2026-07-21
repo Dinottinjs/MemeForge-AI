@@ -146,20 +146,30 @@ export default function App() {
   const generateMeme = async () => {
     if (!prompt) return
     setLoading(true); setError(''); setMediaResult(null)
-    if (plan !== 'FREE' && (window as any).electron) {
-      const data = await (window as any).electron.invoke('generate-local', prompt, selectedGpu)
-      if (data.success) { setMediaResult(data); toast.success('Meme generiert!') }
-      else { toast.error(data.error); setError(data.error) }
-    } else {
-      const res = await fetch(`${API}/meme/generate`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ prompt })
-      })
-      const data = await res.json()
-      if (res.ok) { setMediaResult(data); toast.success('Meme generiert!') }
-      else { toast.error(data.error || 'Fehler'); setError(data.error || 'Fehler') }
+    try {
+      if (plan !== 'FREE' && (window as any).electron) {
+        // Hinweis anzeigen, dass der allererste lokale Start wegen PyTorch-Download länger dauern kann
+        toast('Info: Der allererste lokale GPU-Render kann dauern (Downloads im Hintergrund).', { icon: '⏳', duration: 8000 })
+        const data = await (window as any).electron.invoke('generate-local', prompt, selectedGpu)
+        if (data && data.success) { setMediaResult(data); toast.success('Meme generiert!') }
+        else { toast.error(data?.error || 'Unbekannter lokaler Fehler'); setError(data?.error || 'Unbekannter lokaler Fehler') }
+      } else {
+        const res = await fetch(`${API}/meme/generate`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ prompt })
+        })
+        const data = await res.json()
+        if (res.ok) { setMediaResult(data); toast.success('Meme generiert!') }
+        else { toast.error(data.error || 'Fehler'); setError(data.error || 'Fehler') }
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError('Verbindungsfehler oder Timeout. Bitte überprüfe deine Internetverbindung oder den Server.')
+      toast.error('Generierung fehlgeschlagen.')
+    } finally {
+      setLoading(false)
+      fetchHistory() // Refresh gallery just in case
     }
-    setLoading(false)
   }
 
   const fetchHistory = async () => {
