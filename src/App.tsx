@@ -143,7 +143,7 @@ export default function App() {
   const generateMeme = async () => {
     if (!prompt) return
     setLoading(true); setError(''); setVideoResult(null)
-    if (plan !== 'FREE' && (window as any).require) {
+    if (plan !== 'FREE' && (window as any).electron) {
       const data = await (window as any).electron.invoke('generate-local', prompt, selectedGpu)
       if (data.success) { setVideoResult(data); toast.success('Video generiert!') }
       else { toast.error(data.error); setError(data.error) }
