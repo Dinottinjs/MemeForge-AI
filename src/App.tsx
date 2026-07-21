@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { io } from 'socket.io-client'
 import { Toaster, toast } from 'react-hot-toast'
+import { Settings, LogOut, Key, ShieldCheck, CreditCard, Sparkles, Image as ImageIcon, Loader2, CheckCircle2, Lock, Unlock, Zap } from 'lucide-react'
 
 type AuthStep = 'login' | 'register' | '2fa' | 'studio'
 
@@ -236,7 +237,10 @@ export default function App() {
             <label className="block text-slate-400 mb-2 font-semibold text-sm">Passwort</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full zen-input p-3 bg-black/20" required />
           </div>
-          <button disabled={loading} className="w-full btn-glow text-white font-bold py-3.5 rounded-xl">{loading ? 'Lade...' : step === 'login' ? 'Einloggen' : 'Registrieren'}</button>
+          <button disabled={loading} className="w-full btn-glow flex items-center justify-center gap-2 text-white font-bold py-3.5 rounded-xl">
+            {loading ? <Loader2 className="animate-spin" size={20} /> : null}
+            {step === 'login' ? 'Einloggen' : 'Registrieren'}
+          </button>
         </form>
         <div className="text-center mt-6">
           <button onClick={() => { setStep(step === 'login' ? 'register' : 'login'); setError('') }} className="text-slate-400 hover:text-white text-sm transition-colors">
@@ -252,14 +256,17 @@ export default function App() {
       {BG}
       <Toaster position="bottom-right" toastOptions={{ style: { background: '#1e293b', color: '#fff', borderRadius: '12px' } }} />
       <form onSubmit={handle2FA} className="glass-panel hover-glow-panel p-10 w-full max-w-md z-10 text-center rounded-3xl">
-        <div className="text-5xl mb-4">🔐</div>
+        <div className="flex justify-center mb-4"><ShieldCheck size={48} className="text-blue-400" /></div>
         <h2 className="text-2xl font-bold text-white mb-2">2-Faktor-Authentifizierung</h2>
         <p className="text-slate-400 text-sm mb-6">Gib den 6-stelligen Code aus deiner Authenticator-App ein.</p>
         {error && <div className="bg-red-500/10 text-red-400 p-3 rounded-xl border border-red-500/20 mb-4 text-sm">{error}</div>}
         <input value={twoFaCode} onChange={e => setTwoFaCode(e.target.value)}
           className="w-full zen-input p-4 text-center text-2xl tracking-[0.5em] font-mono mb-6"
           maxLength={6} placeholder="000000" required />
-        <button disabled={loading} className="w-full btn-glow text-white font-bold py-3.5 rounded-xl">{loading ? 'Prüfe...' : 'Bestätigen'}</button>
+        <button disabled={loading} className="w-full btn-glow flex items-center justify-center gap-2 text-white font-bold py-3.5 rounded-xl">
+          {loading ? <Loader2 className="animate-spin" size={20} /> : null}
+          Bestätigen
+        </button>
         <button type="button" onClick={() => setStep('login')} className="mt-4 text-slate-500 hover:text-slate-300 text-sm transition-colors">← Zurück</button>
       </form>
     </div>
@@ -279,8 +286,12 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <span className={`px-5 py-1.5 rounded-full text-sm font-bold border ${plan === 'PRO' ? 'rank-badge-pro' : 'rank-badge-free'}`}>{plan} PLAN</span>
-            <button onClick={() => { setShowAccount(!showAccount); setError(''); setSuccessMsg('') }} className="text-slate-400 hover:text-white font-semibold transition-colors text-sm">⚙ Einstellungen</button>
-            <button onClick={logout} className="text-slate-400 hover:text-white font-semibold transition-colors text-sm">Logout</button>
+            <button onClick={() => { setShowAccount(!showAccount); setError(''); setSuccessMsg('') }} className="flex items-center gap-1.5 text-slate-400 hover:text-white font-semibold transition-colors text-sm">
+              <Settings size={16} /> Einstellungen
+            </button>
+            <button onClick={logout} className="flex items-center gap-1.5 text-slate-400 hover:text-white font-semibold transition-colors text-sm">
+              <LogOut size={16} /> Logout
+            </button>
           </div>
         </header>
 
@@ -288,37 +299,45 @@ export default function App() {
         {showAccount && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div className="glass-panel hover-glow-panel p-6 rounded-2xl">
-              <h3 className="text-lg font-bold text-white mb-4">🔑 Passwort ändern</h3>
+              <h3 className="text-lg flex items-center gap-2 font-bold text-white mb-4"><Key size={20} className="text-blue-400" /> Passwort ändern</h3>
               {error && <div className="bg-red-500/10 text-red-400 p-3 rounded-xl border border-red-500/20 mb-3 text-sm">{error}</div>}
               {successMsg && <div className="bg-green-500/10 text-green-400 p-3 rounded-xl border border-green-500/20 mb-3 text-sm">{successMsg}</div>}
               <form onSubmit={changeOwnPassword} className="flex flex-col gap-3">
                 <input type="password" placeholder="Aktuelles Passwort" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="zen-input p-3 bg-black/20" required />
                 <input type="password" placeholder="Neues Passwort" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="zen-input p-3 bg-black/20" required />
-                <button disabled={loading} className="zen-button text-white font-bold py-3 rounded-xl">Ändern</button>
+                <button disabled={loading} className="zen-button flex items-center justify-center gap-2 text-white font-bold py-3 rounded-xl">
+                  {loading ? <Loader2 className="animate-spin" size={18} /> : null} Ändern
+                </button>
               </form>
             </div>
             <div className="glass-panel hover-glow-panel p-6 rounded-2xl">
-              <h3 className="text-lg font-bold text-white mb-2">🔐 2-Faktor-Authentifizierung</h3>
+              <h3 className="text-lg flex items-center gap-2 font-bold text-white mb-2"><ShieldCheck size={20} className="text-purple-400" /> 2-Faktor-Authentifizierung</h3>
               <p className="text-slate-400 text-xs mb-4">Google Authenticator / Authy / Microsoft Authenticator</p>
               {error && <div className="bg-red-500/10 text-red-400 p-3 rounded-xl border border-red-500/20 mb-3 text-sm">{error}</div>}
               {successMsg && <div className="bg-green-500/10 text-green-400 p-3 rounded-xl border border-green-500/20 mb-3 text-sm">{successMsg}</div>}
               {twoFaEnabled ? (
                 <form onSubmit={disable2FA} className="flex flex-col gap-3">
-                  <div className="flex items-center gap-2 text-green-400 font-bold mb-2"><span>✅</span> 2FA ist aktiv</div>
+                  <div className="flex items-center gap-2 text-green-400 font-bold mb-2"><CheckCircle2 size={18} /> 2FA ist aktiv</div>
                   <input type="password" placeholder="Passwort zur Bestätigung" value={disablePassword} onChange={e => setDisablePassword(e.target.value)} className="zen-input p-3 bg-black/20" required />
-                  <button disabled={loading} className="bg-red-600/50 hover:bg-red-600 border border-red-500/30 text-white font-bold py-3 rounded-xl transition-all">Deaktivieren</button>
+                  <button disabled={loading} className="flex items-center justify-center gap-2 bg-red-600/50 hover:bg-red-600 border border-red-500/30 text-white font-bold py-3 rounded-xl transition-all">
+                    {loading ? <Loader2 className="animate-spin" size={18} /> : <Unlock size={18} />} Deaktivieren
+                  </button>
                 </form>
               ) : (
                 !qrCode ? (
-                  <button onClick={setup2FA} disabled={loading} className="btn-glow text-white font-bold py-3 w-full rounded-xl">{loading ? 'Generiere...' : '🔑 2FA einrichten'}</button>
+                  <button onClick={setup2FA} disabled={loading} className="flex items-center justify-center gap-2 btn-glow text-white font-bold py-3 w-full rounded-xl">
+                    {loading ? <Loader2 className="animate-spin" size={18} /> : <Lock size={18} />} 2FA einrichten
+                  </button>
                 ) : (
                   <div>
                     <p className="text-slate-400 text-xs mb-2">Scanne mit deiner Authenticator-App:</p>
-                    <img src={qrCode} alt="QR" className="rounded-xl border border-white/10 mb-2 mx-auto" style={{ width: 150 }} />
-                    <p className="text-slate-500 text-xs mb-3 break-all text-center">Schlüssel: <span className="text-blue-400 font-mono">{totpSecret}</span></p>
+                    <div className="p-3 bg-white rounded-xl inline-block mb-3"><img src={qrCode} alt="QR" className="w-32 h-32" /></div>
+                    <p className="text-slate-500 text-xs mb-3 break-all">Schlüssel: <span className="text-blue-400 font-mono">{totpSecret}</span></p>
                     <form onSubmit={enable2FA} className="flex flex-col gap-3">
                       <input value={enableCode} onChange={e => setEnableCode(e.target.value)} className="zen-input p-3 text-center text-xl tracking-[0.4em] font-mono" maxLength={6} placeholder="000000" required />
-                      <button disabled={loading} className="btn-glow text-white font-bold py-3 rounded-xl">{loading ? 'Prüfe...' : '✅ Aktivieren'}</button>
+                      <button disabled={loading} className="flex items-center justify-center gap-2 btn-glow text-white font-bold py-3 rounded-xl">
+                        {loading ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />} Aktivieren
+                      </button>
                     </form>
                   </div>
                 )
@@ -335,7 +354,9 @@ export default function App() {
               <button onClick={activateLicense} disabled={loading || !licenseKey} className="btn-glow text-white font-bold px-6 py-3 rounded-xl transition-all">Einlösen</button>
             </div>
             <div className="flex justify-end">
-              <button onClick={buyPro} disabled={loading} className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]">💳 Kaufen</button>
+              <button onClick={buyPro} disabled={loading} className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]">
+                <CreditCard size={18} /> Kaufen
+              </button>
             </div>
           </div>
         )}
@@ -353,17 +374,31 @@ export default function App() {
               </div>
             )}
             <textarea value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="z.B. Tanzende Katze im Weltall..." className="w-full zen-input p-5 min-h-[140px] resize-none text-lg bg-black/20 rounded-2xl border-white/10" />
-            <button onClick={generateMeme} disabled={loading || !prompt} className="btn-glow text-white font-bold py-4 text-lg w-full rounded-2xl">
-              {loading ? 'Generierung läuft...' : '✨ Meme generieren'}
+            <button onClick={generateMeme} disabled={loading || !prompt} className="btn-glow flex items-center justify-center gap-2 text-white font-bold py-4 text-lg w-full rounded-2xl">
+              {loading ? <Loader2 className="animate-spin" size={24} /> : <Sparkles size={24} />}
+              {loading ? 'Generierung läuft...' : 'Meme generieren'}
             </button>
             {error && <p className="text-red-400 text-center font-bold">{error}</p>}
           </div>
-          {mediaResult && (
-            <div className="mt-12 w-full max-w-2xl bg-black/40 p-6 rounded-2xl border border-white/10">
-              <p className="text-green-400 font-bold mb-4">✅ {mediaResult.message}</p>
-              <img src={mediaResult.image_url} alt="Generated Meme" className="w-full rounded-xl shadow-2xl border border-white/5" />
-            </div>
-          )}
+
+          <div className="mt-12 w-full max-w-2xl bg-black/40 p-6 rounded-2xl border border-white/10 min-h-[400px] flex items-center justify-center relative overflow-hidden">
+            {mediaResult ? (
+              <div className="w-full flex flex-col items-center">
+                <p className="text-green-400 font-bold mb-4 flex items-center gap-2"><CheckCircle2 size={20} /> {mediaResult.message}</p>
+                <img src={mediaResult.image_url} alt="Generated Meme" className="w-full h-auto object-contain rounded-xl shadow-2xl border border-white/5" />
+              </div>
+            ) : loading ? (
+              <div className="flex flex-col items-center text-blue-400">
+                <Loader2 className="animate-spin mb-4" size={48} />
+                <p className="font-semibold animate-pulse">KI schmiedet dein Meme...</p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center text-slate-500/50">
+                <ImageIcon size={64} className="mb-4" />
+                <p className="font-semibold text-lg">Bild-Vorschau</p>
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>
