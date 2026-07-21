@@ -1,3 +1,4 @@
+// © 2026 MemeForge-AI. All rights reserved.
 import { useState, useEffect } from 'react'
 import { io } from 'socket.io-client'
 import { Toaster, toast } from 'react-hot-toast'

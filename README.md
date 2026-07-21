@@ -1,102 +1,33 @@
-# ⚡ MemeForge-AI Studio
+# MemeForge-AI
+> The Ultimate Viral AI Meme Generator
 
-> **KI-gestützte Meme & Video-Generierung** — Als lokale Desktop-App mit Cloud-Lizenzierung und GPU-Beschleunigung.
+![MemeForge-AI Banner](https://via.placeholder.com/1200x400.png?text=MemeForge-AI+Studio)
 
-[![GitHub](https://img.shields.io/badge/Platform-Windows-blue?logo=windows)](https://github.com/Dinottinjs/MemeForge-AI)
-[![License](https://img.shields.io/badge/Plan-Freemium-purple)](https://github.com/Dinottinjs/MemeForge-AI)
+**MemeForge-AI** is a premium, high-performance desktop application that empowers creators to forge viral, internet-breaking memes using state-of-the-art Stable Diffusion models.
 
----
+## 🚀 Features
 
-## 📥 Installation
+- **Local GPU Rendering (PRO):** Leverage your own hardware (RTX/DirectML) for unlimited, lightning-fast generation without server wait times.
+- **Cloud Generation (FREE):** Instantly create up to 3 memes per 3-hour window using our dedicated cloud infrastructure.
+- **Meme Gallery:** Automatically save and review your generated memes.
+- **Instant Export:** Native 1-click downloads and clipboard copying for seamless social media sharing.
+- **Premium Interface:** A dark-mode, glassmorphism UI designed for a "WOW" user experience.
+- **Enterprise-Grade Security:** 2FA authentication, secure Stripe integration, and encrypted communication.
 
-Kein Programmierwissen oder Terminal nötig — lade einfach die Software herunter und starte sie!
+## 🛠️ Tech Stack
 
-### Windows
-1. **Setup herunterladen** — Lade die neueste `MemeForge-AI Setup X.X.X.exe` aus dem Release-Tab auf GitHub herunter.
-2. **Doppelklicken** — Die Setup-Datei installieren (wie jedes normale Programm).
-3. **Fertig!** — Das Programm startet von selbst und legt ein Icon auf deinem Desktop ab! 🎉
+- **Frontend:** React, TypeScript, Tailwind CSS, Lucide Icons
+- **Desktop Environment:** Electron, Vite
+- **AI Core:** Python, PyTorch, Diffusers
+- **Backend:** Node.js, Express, Prisma (SQLite/PostgreSQL)
 
----
+## 📦 Installation (Desktop App)
 
-## 🚀 So funktioniert's
+1. Download the latest installer from the Releases tab.
+2. Run `MemeForge-AI Setup 0.0.0.exe`.
+3. Create an account and start forging!
 
-### 1. 🔐 Account erstellen / Einloggen
-Beim ersten Start einfach einen neuen Account mit E-Mail, Benutzername und Passwort erstellen. Deine Daten werden sicher auf unserem Server gespeichert — du kannst dich von jedem Gerät aus einloggen, ohne Daten zu verlieren.
+## 📄 License
 
-### 2. 🔑 2-Faktor-Authentifizierung (optional, empfohlen)
-Unter **Einstellungen → 2FA einrichten** kannst du deinen Account mit einer Authenticator-App (Google Authenticator, Authy, Microsoft Authenticator) sichern. QR-Code scannen → Code eingeben → fertig!
-
-### 3. 💎 PRO-Lizenz aktivieren
-Du startest im **FREE**-Modus. Um die volle GPU-Power zu nutzen:
-- Gib deinen `PRO`-Lizenzschlüssel im gelben Banner ein
-- Dein Rang aktualisiert sich **live per WebSocket** — kein Neustart nötig!
-
-### 4. 🎨 AI Viral Meme generieren
-1. Wähle deine Grafikkarte aus dem **GPU-Dropdown** (nur PRO)
-2. Gib deinen Prompt ein (z.B. *"Tanzende Katze im Weltraum"*)
-3. Klicke auf **✨ Meme generieren**
-4. Die KI-Engine rendert das Meme blitzschnell auf deiner GPU!
-
----
-
-## 💡 Features
-
-| Feature | FREE | PRO |
-|---|---|---|
-| Account & Login | ✅ | ✅ |
-| 2FA Authentifizierung | ✅ | ✅ |
-| Account-Einstellungen | ✅ | ✅ |
-| Viral Meme generieren (Server) | ✅ | ✅ |
-| Lokales GPU-Rendering | ❌ | ✅ |
-| GPU-Auswahl (eigene Hardware) | ❌ | ✅ |
-| Live-Plan Upgrade (WebSocket) | ✅ | ✅ |
-| Unbegrenzte Generierungen | ❌ | ✅ |
-
----
-
-## 🎨 Design
-
-- **Glassmorphism Dark Theme** — modernes, mattes UI mit Tiefenwirkung
-- **Neon Glow Badges** — animierte Rang-Anzeige (FREE / PRO)
-- **GPU-Auswahl Dropdown** — zeigt Grafikkarte, Hersteller & VRAM
-- **Live-Animationen** — flüssige Übergänge und Mikro-Animationen
-
----
-
-## 🔒 Sicherheit
-
-- 🔐 Passwörter werden mit **Argon2** gehasht (serverseitig)
-- 🛡️ JWT-basierte Authentifizierung mit 24h Ablauf
-- 📲 TOTP-2FA (RFC 6238) — kompatibel mit allen gängigen Authenticator-Apps
-- ⏱️ **Account Lockout** nach 5 Fehlversuchen (15 Minuten)
-- 🚫 Rate Limiting auf allen Auth-Endpoints
-
----
-
-## 🖥️ Systemanforderungen
-
-| Komponente | Minimum |
-|---|---|
-| OS | Windows 10 / 11 |
-| RAM | 4 GB |
-| Speicher | 500 MB |
-| GPU (für PRO) | NVIDIA / AMD mit CUDA/OpenCL |
-| Node.js | v20+ (wird automatisch geprüft) |
-| Python | 3.8+ (für KI-Engine) |
-| Internet | Für Account & Lizenz-Validierung |
-
----
-
-## 📁 Dateistruktur
-
-```text
-MemeForge-AI/
-├── local_image_generator.py  ← Lokale KI-Engine (GPU)
-├── electron/           ← Desktop App (Main Process & IPC)
-├── src/                ← Haupt-UI (React Frontend)
-└── dist/               ← Fertige Setup .exe (nach Build)
-```
-
----
-
-*Copyright © 2026 Dinottinjs — Alle Rechte vorbehalten.*
+© 2026 MemeForge-AI. All rights reserved.
+This software is proprietary. Unauthorized copying, modification, or distribution is strictly prohibited.
